@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,19 @@ public class UserService {
     User user = new User();
     user.setUsername(username);
     user.setPassword(passwordEncoder.encode(password));
+
+    return userRepository.save(user);
+  }
+
+  public User getUserById(Long id) {
+    return userRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+  }
+
+  public User updateUser(Long id, User userDetails) {
+    User user = getUserById(id);
+
+    user.setAddress(userDetails.getAddress());
 
     return userRepository.save(user);
   }
